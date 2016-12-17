@@ -27,6 +27,7 @@ defmodule MapDiff do
   ```elixir
   iex> MapDiff.diff(%{my: 1}, %{my: 1})
   %{changed: :equal, value: %{my: 1}}
+
   ```
 
   When a key disappears, it is considered `:removed`:
@@ -34,13 +35,16 @@ defmodule MapDiff do
   ```elixir
   iex> MapDiff.diff(%{a: 1}, %{})
   %{changed: :map_change, value: %{a: %{changed: :removed, value: 1}}}
+
   ```
+  
   When a key appears, it is considered `:added`:
 
   ```elixir
   iex> MapDiff.diff(%{}, %{b: 2})
   %{changed: :map_change, value: %{b: %{changed: :added, value: 2}}}
-   ```
+
+  ```
 
   When the value of a key changes (and the old nor the new value was a map),
   then this is considered a `:primitive_change`.
@@ -49,12 +53,14 @@ defmodule MapDiff do
   iex> MapDiff.diff(%{b: 3}, %{b: 2})
   %{changed: :map_change,
     value: %{b: %{added: 2, changed: :primitive_change, removed: 3}}}
+
   ```
 
   ```elixir
   iex> MapDiff.diff(%{val: 3}, %{val: %{}})
   %{changed: :map_change,
     value: %{val: %{changed: :primitive_change, added: %{}, removed: 3}}}
+
   ```
 
   When the value of a key changes, and the old and new values are both maps,
@@ -65,6 +71,7 @@ defmodule MapDiff do
   %{changed: :map_change,
     value: %{a: %{changed: :map_change,
     value: %{b: %{changed: :added, value: 1}}}}}
+
   ```
 
   A more complex example, to see what happens with nested maps:
@@ -81,7 +88,9 @@ defmodule MapDiff do
         changed: :primitive_change, removed: 3},
       e: %{changed: :removed, value: 4},
       f: %{added: 10, changed: :primitive_change, removed: 5}}}}}
+
   ```
+
   """
   def diff(a, a), do: %{changed: :equal, value: a}
   def diff(a = %{}, b = %{}) do
