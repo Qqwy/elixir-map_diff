@@ -1,6 +1,7 @@
 # MapDiff
 
-  Calculates the difference between two (nested) maps.
+  Calculates the difference between two (nested) maps,
+  and returns a map representing the _patch_ of changes.
 
   The idea is very simple:
   One of four things can happen to each key in a map:
