@@ -1,6 +1,6 @@
 defmodule MapDiff do
   @moduledoc """
-  Calculates the difference between two (nested) maps, `map_a` and `map_b`.
+  Calculates the difference between two (nested) maps.
 
   The idea is very simple:
   One of four things can happen to each key in a map:
@@ -19,6 +19,9 @@ defmodule MapDiff do
 
   @doc """
   This is the single function that MapDiff currently exports.
+
+  It returns a 'patch', which is a map describing the changes between
+  `map_a` and `map_b`.
 
   ## Examples
 
