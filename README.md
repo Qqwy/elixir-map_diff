@@ -1,5 +1,10 @@
 # MapDiff
 
+[![hex.pm version](https://img.shields.io/hexpm/v/map_diff.svg)](https://hex.pm/packages/map_diff)
+[![Build Status](https://travis-ci.org/Qqwy/elixir_map_diff.svg?branch=master)](https://travis-ci.org/Qqwy/elixir_map_diff)
+[![Inline docs](http://inch-ci.org/github/qqwy/elixir_map_diff.svg)](http://inch-ci.org/github/qqwy/elixir_map_diff)
+
+
   Calculates the difference between two (nested) maps,
   and returns a map representing the _patch_ of changes.
 
