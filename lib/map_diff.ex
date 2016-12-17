@@ -18,6 +18,7 @@ defmodule MapDiff do
   """
 
   @doc """
+  This is the single function that MapDiff currently exports.
 
   ## Examples
 
@@ -55,7 +56,7 @@ defmodule MapDiff do
     value: %{a: %{changed: :map_change,
     value: %{b: %{changed: :added, value: 1}}}}}
 
-  A more complex example, to see everything happen in full glory:
+  A more complex example, to see what happens with nested maps:
 
   iex> foo = %{a: 1, b: 2, c: %{d: 3, e: 4, f: 5}}
   iex> bar = %{a: 1, b: 42, c: %{d: %{something_else: "entirely"}, f: 10}}
