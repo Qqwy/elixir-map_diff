@@ -110,6 +110,7 @@ defmodule MapDiff do
   defmodule Baz do
     defstruct a: "foo", b: "bar", z: "baz"
   end
+
   ```
 
   Then the fields of one `Foo` struct can be compared to another:
@@ -119,6 +120,7 @@ defmodule MapDiff do
   %{changed: :map_change, struct_name: Foo,
     value: %{a: %{added: 3, changed: :primitive_change, removed: 1},
       b: %{changed: :equal, value: 2}, c: %{changed: :equal, value: 3}}}
+
   ```
 
   When comparing two different kinds of structs, this of course
@@ -129,6 +131,7 @@ defmodule MapDiff do
   iex> MapDiff.diff(%Foo{}, %Bar{})
   %{added: %Bar{a: "foo", b: "bar", z: "baz"}, changed: :primitive_change,
     removed: %Foo{a: 1, b: 2, c: 3}}
+
   ```
 
   """
