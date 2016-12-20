@@ -94,9 +94,62 @@ defmodule MapDiff do
 
   ```
 
+  It is also possible to compare two structs of the same kind.
+  `MapDiff.diff/2` will add a `struct_name` field to the output,
+  so you are reminded of the kind of struct whose fields were changed.
+
+
+  For example, suppose you define the following structs:
+
+
+  ```elixir
+  defmodule Foo do
+    defstruct a: 1, b: 2, c: 3
+  end
+
+  defmodule Baz do
+    defstruct a: "foo", b: "bar", z: "baz"
+  end
+  ```
+
+  Then the fields of one `Foo` struct can be compared to another:
+
+  ```elixir
+  iex> MapDiff.diff(%Foo{}, %Foo{a: 3})
+  %{changed: :map_change, struct_name: Foo,
+    value: %{a: %{added: 3, changed: :primitive_change, removed: 1},
+      b: %{changed: :equal, value: 2}, c: %{changed: :equal, value: 3}}}
+  ```
+
+  When comparing two different kinds of structs, this of course
+  results in a :primitive_change, as they are simply considered
+  primitive data types.
+
+  ```elixir
+  iex> MapDiff.diff(%Foo{}, %Bar{})
+  %{added: %Bar{a: "foo", b: "bar", z: "baz"}, changed: :primitive_change,
+    removed: %Foo{a: 1, b: 2, c: 3}}
+  ```
+
   """
   def diff(map_a, map_b)
   def diff(a, a), do: %{changed: :equal, value: a}
+
+
+  # two structs of the same kind:
+  # compare fields,
+  # keep track of struct name.
+  def diff(a = %struct_name{}, b = %struct_name{}) do
+    diff(a |> Map.delete(:__struct__), b |> Map.delete(:__struct__))
+    |> Map.put(:struct_name, struct_name)
+  end
+
+  # two different structs.
+  def diff(a = %_one{}, b = %_other{}) do
+    %{changed: :primitive_change, removed: a, added: b}
+  end
+
+  # two non-struct maps.
   def diff(a = %{}, b = %{}) do
     {changes, equal?} =
       Enum.reduce(a, {%{}, true}, fn {key, vala}, {changes, equal?} ->
