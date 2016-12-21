@@ -40,7 +40,7 @@ defmodule MapDiff do
   %{changed: :map_change, value: %{a: %{changed: :removed, value: 1}}}
 
   ```
-  
+
   When a key appears, it is considered `:added`:
 
   ```elixir
@@ -154,36 +154,29 @@ defmodule MapDiff do
 
   # two non-struct maps.
   def diff(a = %{}, b = %{}) do
-    {changes, equal?} =
-      Enum.reduce(a, {%{}, true}, fn {key, vala}, {changes, equal?} ->
-        if Map.has_key?(b, key) do
-          valb = b[key]
-          if vala === valb do
-            {Map.put(changes, key, %{changed: :equal, value: vala}), equal?}
-          else
-            if is_map(vala) && is_map(valb) do
-              valueDiff = diff(vala, valb)
-              if (valueDiff.changed == :equal) do
-                {Map.put(changes, key, %{changed: :equal, value: vala}), equal?}
-              else
-                {Map.put(changes, key, valueDiff), false}
-              end
-            else
-              {Map.put(changes, key, %{changed: :primitive_change, removed: vala, added: valb}), false}
-            end
-          end
-        else
-          {Map.put(changes, key, %{changed: :removed, value: vala}), false}
-        end
-      end)
-
+    {changes, equal?} = Enum.reduce(a, {%{}, true}, &compare(&1, &2, b))
     {changes, equal?} = additions(a, b, changes, equal?)
+    equal? && %{changed: :equal, value: a} || %{changed: :map_change, value: changes}
+  end
 
-    if equal? do
-      %{changed: :equal, value: a}
-    else
-      %{changed: :map_change, value: changes}
+  defp compare({key, _} = el, acc, b) do
+    compare(el, acc, b[key], Map.has_key?(b, key))
+  end
+  defp compare({key, val}, {changes, equal?}, val, true) do
+    {Map.put(changes, key, %{changed: :equal, value: val}), equal?}
+  end
+  defp compare({key, vala}, {changes, equal?}, valb, true) when is_map(vala) and is_map(valb) do
+    valueDiff = diff(vala, valb)
+    case valueDiff.changed do
+      :equal -> {Map.put(changes, key, %{changed: :equal, value: vala}), equal?}
+           _ -> {Map.put(changes, key, valueDiff), false}
     end
+  end
+  defp compare({key, vala}, {changes, _}, valb, true) do
+    {Map.put(changes, key, %{changed: :primitive_change, removed: vala, added: valb}), false}
+  end
+  defp compare({key, vala}, {changes, _}, _, false) do
+    {Map.put(changes, key, %{changed: :removed, value: vala}), false}
   end
 
   # Iterates over all new keys in `b` that were not in `a`, and returns their values
