@@ -20,10 +20,8 @@
   and `:map_change` if in both arguments this value itself is a map,
   which means that `MapDiff.diff/2` was called on it recursively.
 
-  """
-
-  @doc """
-  This is the single function that MapDiff currently exports.
+  
+  `MapDiff.diff/2` is the single function that MapDiff currently exports.
 
   It returns a 'patch', which is a map describing the changes between
   `map_a` and `map_b`.
@@ -147,6 +145,12 @@ def deps do
   [{:map_diff, "~> 1.0"}]
 end
 ```
+
+## Changelog
+
+- 1.1.1 Refactoring by @andre1sk. Thank you!
+- 1.1.0 Allow comparison of struct fields.
+- 1.0.0 First stable version.
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can

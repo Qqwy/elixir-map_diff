@@ -159,7 +159,7 @@ defmodule MapDiff do
     equal? && %{changed: :equal, value: a} || %{changed: :map_change, value: changes}
   end
 
-  defp compare({key, _} = el, acc, b) do
+  defp compare(el = {key, _}, acc, b) do
     compare(el, acc, b[key], Map.has_key?(b, key))
   end
   defp compare({key, val}, {changes, equal?}, val, true) do
