@@ -148,6 +148,7 @@ end
 
 ## Changelog
 
+- 1.2.0 Comparisons with non-maps is now possible (yielding `:primitive_change`s).
 - 1.1.1 Refactoring by @andre1sk. Thank you!
 - 1.1.0 Allow comparison of struct fields.
 - 1.0.0 First stable version.
