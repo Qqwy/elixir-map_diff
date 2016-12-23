@@ -138,6 +138,10 @@ defmodule MapDiff do
   def diff(map_a, map_b)
   def diff(a, a), do: %{changed: :equal, value: a}
 
+  # Comparisons where one or both elements are non-maps.
+  def diff(a, b) when not(is_map(a)), do: %{changed: :primitive_change, removed: a, added: b}
+  def diff(a, b) when not(is_map(b)), do: %{changed: :primitive_change, removed: a, added: b}
+
 
   # two structs of the same kind:
   # compare fields,
