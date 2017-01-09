@@ -148,6 +148,7 @@ end
 
 ## Changelog
 
+- 1.3.0 Improved doctests, added `:added` and `:removed` fields to see without crawling in the depth what was changed at a `:map_change`.
 - 1.2.0 Comparisons with non-maps is now possible (yielding `:primitive_change`s).
 - 1.1.1 Refactoring by @andre1sk. Thank you!
 - 1.1.0 Allow comparison of struct fields.

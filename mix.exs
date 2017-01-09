@@ -3,7 +3,7 @@ defmodule MapDiff.Mixfile do
 
   def project do
     [app: :map_diff,
-     version: "1.2.0",
+     version: "1.3.0",
      # build_path: "../../_build",
      # config_path: "../../config/config.exs",
      # deps_path: "../../deps",
@@ -44,7 +44,9 @@ defmodule MapDiff.Mixfile do
     [
       {:earmark, ">= 0.0.0", only: [:dev]},    # Markdown, dependency of ex_doc
       {:ex_doc, "~> 0.11",   only: [:dev]},    # Documentation for Hex.pm
-      {:inch_ex, ">= 0.0.0", only: :docs}                  # Inch CI documentation quality test.
+      {:inch_ex, ">= 0.0.0", only: :docs},     # Inch CI documentation quality test.
+
+      {:tensor, "~> 1.0"}
     ]
   end
 

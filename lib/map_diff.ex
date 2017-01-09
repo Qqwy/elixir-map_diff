@@ -37,7 +37,8 @@ defmodule MapDiff do
 
   ```elixir
   iex> MapDiff.diff(%{a: 1}, %{})
-  %{changed: :map_change, value: %{a: %{changed: :removed, value: 1}}}
+  %{added: %{}, changed: :map_change, removed: %{a: 1},
+    value: %{a: %{changed: :removed, value: 1}}}
 
   ```
 
@@ -45,7 +46,8 @@ defmodule MapDiff do
 
   ```elixir
   iex> MapDiff.diff(%{}, %{b: 2})
-  %{changed: :map_change, value: %{b: %{changed: :added, value: 2}}}
+  %{added: %{b: 2}, changed: :map_change, removed: %{},
+    value: %{b: %{changed: :added, value: 2}}}
 
   ```
 
@@ -54,15 +56,16 @@ defmodule MapDiff do
 
   ```elixir
   iex> MapDiff.diff(%{b: 3}, %{b: 2})
-  %{changed: :map_change,
-    value: %{b: %{added: 2, changed: :primitive_change, removed: 3}}}
+  %{added: %{b: 2}, changed: :map_change, removed: %{b: 3},
+  value: %{b: %{added: 2, changed: :primitive_change, removed: 3}}}
 
   ```
 
   ```elixir
   iex> MapDiff.diff(%{val: 3}, %{val: %{}})
-  %{changed: :map_change,
-    value: %{val: %{changed: :primitive_change, added: %{}, removed: 3}}}
+  %{added: %{val: %{}}, changed: :map_change, removed: %{val: 3},
+  value: %{val: %{added: %{}, changed: :primitive_change,
+  removed: 3}}}
 
   ```
 
@@ -71,9 +74,9 @@ defmodule MapDiff do
 
   ```elixir
   iex> MapDiff.diff(%{a: %{}}, %{a: %{b: 1}})
-  %{changed: :map_change,
-    value: %{a: %{changed: :map_change,
-    value: %{b: %{changed: :added, value: 1}}}}}
+  %{added: %{a: %{b: 1}}, changed: :map_change, removed: %{a: %{}},
+  value: %{a: %{added: %{b: 1}, changed: :map_change, removed: %{},
+  value: %{b: %{changed: :added, value: 1}}}}}
 
   ```
 
@@ -83,14 +86,19 @@ defmodule MapDiff do
   iex> foo = %{a: 1, b: 2, c: %{d: 3, e: 4, f: 5}}
   iex> bar = %{a: 1, b: 42, c: %{d: %{something_else: "entirely"}, f: 10}}
   iex> MapDiff.diff(foo, bar)
-  %{changed: :map_change,
-    value: %{a: %{changed: :equal, value: 1},
-      b: %{added: 42, changed: :primitive_change, removed: 2},
-      c: %{changed: :map_change,
-        value: %{d: %{added: %{something_else: "entirely"},
-        changed: :primitive_change, removed: 3},
-      e: %{changed: :removed, value: 4},
-      f: %{added: 10, changed: :primitive_change, removed: 5}}}}}
+  %{added: %{a: 1, b: 42,
+  c: %{d: %{something_else: "entirely"}, f: 10}},
+  changed: :map_change,
+  removed: %{a: 1, b: 2, c: %{d: 3, e: 4, f: 5}},
+  value: %{a: %{changed: :equal, value: 1},
+  b: %{added: 42, changed: :primitive_change, removed: 2},
+  c: %{added: %{d: %{something_else: "entirely"}, f: 10},
+  changed: :map_change, removed: %{d: 3, e: 4, f: 5},
+  value: %{d: %{added: %{something_else: "entirely"},
+  changed: :primitive_change, removed: 3},
+  e: %{changed: :removed, value: 4},
+  f: %{added: 10, changed: :primitive_change, removed: 5}}}}}
+
 
   ```
 
@@ -117,9 +125,12 @@ defmodule MapDiff do
 
   ```elixir
   iex> MapDiff.diff(%Foo{}, %Foo{a: 3})
-  %{changed: :map_change, struct_name: Foo,
-    value: %{a: %{added: 3, changed: :primitive_change, removed: 1},
-      b: %{changed: :equal, value: 2}, c: %{changed: :equal, value: 3}}}
+  %{added: %MapDiffTest.Foo{a: 3, b: 2, c: 3}, changed: :map_change,
+  removed: %MapDiffTest.Foo{a: 1, b: 2, c: 3},
+  struct_name: MapDiffTest.Foo,
+  value: %{a: %{added: 3, changed: :primitive_change, removed: 1},
+  b: %{changed: :equal, value: 2},
+  c: %{changed: :equal, value: 3}}}
 
   ```
 
@@ -149,6 +160,8 @@ defmodule MapDiff do
   def diff(a = %struct_name{}, b = %struct_name{}) do
     diff(a |> Map.delete(:__struct__), b |> Map.delete(:__struct__))
     |> Map.put(:struct_name, struct_name)
+    |> Map.put(:removed, a)
+    |> Map.put(:added, b)
   end
 
   # two different structs.
@@ -160,7 +173,7 @@ defmodule MapDiff do
   def diff(a = %{}, b = %{}) do
     {changes, equal?} = Enum.reduce(a, {%{}, true}, &compare(&1, &2, b))
     {changes, equal?} = additions(a, b, changes, equal?)
-    equal? && %{changed: :equal, value: a} || %{changed: :map_change, value: changes}
+    equal? && %{changed: :equal, value: a} || %{changed: :map_change, value: changes, removed: a, added: b}
   end
 
   defp compare(el = {key, _}, acc, b) do
