@@ -19,12 +19,15 @@
   if the value under the key was 'simply changed',
   and `:map_change` if in both arguments this value itself is a map,
   which means that `MapDiff.diff/2` was called on it recursively.
+  
+  In the case of a `:map_change`, the resulting map also contains two extra keys: `:added` and `:removed`, which are maps containing all key-value pairs that were added, removed or changed (in this case, they are listed in both maps) at this level. Keys whose values remained equal are thus not listed in these maps.
 
+  In the case of a `:primitive_change`, the resulting map also contains `:added` and `:removed`, but they simply contain the before and after versions of the value stored.
   
   `MapDiff.diff/2` is the single function that MapDiff currently exports.
 
   It returns a 'patch', which is a map describing the changes between
-  `map_a` and `map_b`.
+  `map_a` and `map_b`. This patch always has the key `:changed`, the key `:value` and if `:changed` is `:map_change`, the keys `:added` and `:removed`.
 
   ## Examples
 
@@ -40,33 +43,28 @@
 
   ```elixir
   iex> MapDiff.diff(%{a: 1}, %{})
-  %{changed: :map_change, value: %{a: %{changed: :removed, value: 1}}}
-
+  %{changed: :map_change,
+  value: %{a: %{changed: :removed, value: 1}}, added: %{}, removed: %{a: 1}}
   ```
   
   When a key appears, it is considered `:added`:
 
   ```elixir
   iex> MapDiff.diff(%{}, %{b: 2})
-  %{changed: :map_change, value: %{b: %{changed: :added, value: 2}}}
-
+  %{changed: :map_change, value: %{b: %{changed: :added, value: 2}}, added: %{b: 2}, removed: %{}}
   ```
 
-  When the value of a key changes (and the old nor the new value was a map),
+  When the value of a key changes (and one or both of the old or new values is not a map),
   then this is considered a `:primitive_change`.
 
   ```elixir
   iex> MapDiff.diff(%{b: 3}, %{b: 2})
-  %{changed: :map_change,
-    value: %{b: %{added: 2, changed: :primitive_change, removed: 3}}}
-
+  %{changed: :map_change, value: %{b: %{added: 2, changed: :primitive_change, removed: 3}}, added: %{b: 2}, removed: %{b: 3}}
   ```
 
   ```elixir
   iex> MapDiff.diff(%{val: 3}, %{val: %{}})
-  %{changed: :map_change,
-    value: %{val: %{changed: :primitive_change, added: %{}, removed: 3}}}
-
+  %{changed: :map_change, value: %{val: %{added: %{}, changed: :primitive_change, removed: 3}}, added: %{val: %{}}, removed: %{val: 3}}
   ```
 
   When the value of a key changes, and the old and new values are both maps,
@@ -74,10 +72,13 @@
 
   ```elixir
   iex> MapDiff.diff(%{a: %{}}, %{a: %{b: 1}})
-  %{changed: :map_change,
-    value: %{a: %{changed: :map_change,
-    value: %{b: %{changed: :added, value: 1}}}}}
-
+  %{changed: :map_change, 
+      value: %{a: %{
+        added: %{b: 1}, changed: :map_change, removed: %{},
+        value: %{b: %{changed: :added, value: 1}}}
+      }, 
+      added: %{a: %{b: 1}}, 
+      removed: %{a: %{}}}
   ```
 
   A more complex example, to see what happens with nested maps:
@@ -86,14 +87,16 @@
   iex> foo = %{a: 1, b: 2, c: %{d: 3, e: 4, f: 5}}
   iex> bar = %{a: 1, b: 42, c: %{d: %{something_else: "entirely"}, f: 10}}
   iex> MapDiff.diff(foo, bar)
-  %{changed: :map_change,
+  %{added: %{a: 1, b: 42, c: %{d: %{something_else: "entirely"}, f: 10}},
+    changed: :map_change, removed: %{a: 1, b: 2, c: %{d: 3, e: 4, f: 5}},
     value: %{a: %{changed: :equal, value: 1},
       b: %{added: 42, changed: :primitive_change, removed: 2},
-      c: %{changed: :map_change,
+      c: %{added: %{d: %{something_else: "entirely"}, f: 10},
+        changed: :map_change, removed: %{d: 3, e: 4, f: 5},
         value: %{d: %{added: %{something_else: "entirely"},
-        changed: :primitive_change, removed: 3},
-      e: %{changed: :removed, value: 4},
-      f: %{added: 10, changed: :primitive_change, removed: 5}}}}}
+            changed: :primitive_change, removed: 3},
+          e: %{changed: :removed, value: 4},
+          f: %{added: 10, changed: :primitive_change, removed: 5}}}}}
 
   ```
 
@@ -110,7 +113,7 @@
     defstruct a: 1, b: 2, c: 3
   end
 
-  defmodule Baz do
+  defmodule Bar do
     defstruct a: "foo", b: "bar", z: "baz"
   end
   ```
@@ -119,9 +122,10 @@
 
   ```elixir
   iex> MapDiff.diff(%Foo{}, %Foo{a: 3})
-  %{changed: :map_change, struct_name: Foo,
-    value: %{a: %{added: 3, changed: :primitive_change, removed: 1},
-      b: %{changed: :equal, value: 2}, c: %{changed: :equal, value: 3}}}
+%{added: %Foo{a: 3, b: 2, c: 3}, changed: :map_change,
+  removed: %Foo{a: 1, b: 2, c: 3}, struct_name: Foo,
+  value: %{a: %{added: 3, changed: :primitive_change, removed: 1},
+    b: %{changed: :equal, value: 2}, c: %{changed: :equal, value: 3}}}
   ```
 
   When comparing two different kinds of structs, this of course
@@ -147,7 +151,7 @@ end
 ```
 
 ## Changelog
-
+- 1.3.1 Fixed README and documentation.
 - 1.3.0 Improved doctests, added `:added` and `:removed` fields to see without crawling in the depth what was changed at a `:map_change`.
 - 1.2.0 Comparisons with non-maps is now possible (yielding `:primitive_change`s).
 - 1.1.1 Refactoring by @andre1sk. Thank you!

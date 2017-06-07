@@ -3,7 +3,7 @@ defmodule MapDiff.Mixfile do
 
   def project do
     [app: :map_diff,
-     version: "1.3.0",
+     version: "1.3.1",
      # build_path: "../../_build",
      # config_path: "../../config/config.exs",
      # deps_path: "../../deps",

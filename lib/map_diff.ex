@@ -115,7 +115,7 @@ defmodule MapDiff do
     defstruct a: 1, b: 2, c: 3
   end
 
-  defmodule Baz do
+  defmodule Bar do
     defstruct a: "foo", b: "bar", z: "baz"
   end
 
