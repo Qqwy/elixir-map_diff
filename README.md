@@ -146,7 +146,7 @@ by adding `map_diff` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:map_diff, "~> 1.0"}]
+  [{:map_diff, "~> 1.3"}]
 end
 ```
 
