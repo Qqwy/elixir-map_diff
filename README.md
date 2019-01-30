@@ -87,8 +87,8 @@
   iex> foo = %{a: 1, b: 2, c: %{d: 3, e: 4, f: 5}}
   iex> bar = %{a: 1, b: 42, c: %{d: %{something_else: "entirely"}, f: 10}}
   iex> MapDiff.diff(foo, bar)
-  %{added: %{a: 1, b: 42, c: %{d: %{something_else: "entirely"}, f: 10}},
-    changed: :map_change, removed: %{a: 1, b: 2, c: %{d: 3, e: 4, f: 5}},
+  %{added: %{b: 42, c: %{d: %{something_else: "entirely"}, f: 10}},
+    changed: :map_change, removed: %{b: 2, c: %{d: 3, e: 4, f: 5}},
     value: %{a: %{changed: :equal, value: 1},
       b: %{added: 42, changed: :primitive_change, removed: 2},
       c: %{added: %{d: %{something_else: "entirely"}, f: 10},
@@ -151,6 +151,7 @@ end
 ```
 
 ## Changelog
+- 1.3.2 Fixes key => values that were unchanged still showing up in the `added` and `removed` fields. (Issue #4)
 - 1.3.1 Fixed README and documentation.
 - 1.3.0 Improved doctests, added `:added` and `:removed` fields to see without crawling in the depth what was changed at a `:map_change`.
 - 1.2.0 Comparisons with non-maps is now possible (yielding `:primitive_change`s).
