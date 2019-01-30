@@ -86,10 +86,10 @@ defmodule MapDiff do
   iex> foo = %{a: 1, b: 2, c: %{d: 3, e: 4, f: 5}}
   iex> bar = %{a: 1, b: 42, c: %{d: %{something_else: "entirely"}, f: 10}}
   iex> MapDiff.diff(foo, bar)
-  %{added: %{a: 1, b: 42,
+  %{added: %{b: 42,
   c: %{d: %{something_else: "entirely"}, f: 10}},
   changed: :map_change,
-  removed: %{a: 1, b: 2, c: %{d: 3, e: 4, f: 5}},
+  removed: %{b: 2, c: %{d: 3, e: 4, f: 5}},
   value: %{a: %{changed: :equal, value: 1},
   b: %{added: 42, changed: :primitive_change, removed: 2},
   c: %{added: %{d: %{something_else: "entirely"}, f: 10},
@@ -173,7 +173,13 @@ defmodule MapDiff do
   def diff(a = %{}, b = %{}) do
     {changes, equal?} = Enum.reduce(a, {%{}, true}, &compare(&1, &2, b))
     {changes, equal?} = additions(a, b, changes, equal?)
-    equal? && %{changed: :equal, value: a} || %{changed: :map_change, value: changes, removed: a, added: b}
+    if equal? do
+      %{changed: :equal, value: a}
+    else
+      removed = Map.to_list(a) -- Map.to_list(b) |> Enum.into(%{})
+      added = Map.to_list(b) -- Map.to_list(a) |> Enum.into(%{})
+      %{changed: :map_change, value: changes, removed: removed, added: added}
+    end
   end
 
   defp compare(el = {key, _}, acc, b) do
