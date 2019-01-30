@@ -42,9 +42,9 @@ defmodule MapDiff.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:earmark, ">= 0.0.0", only: [:dev]},    # Markdown, dependency of ex_doc
-      {:ex_doc, "~> 0.11",   only: [:dev]},    # Documentation for Hex.pm
-      {:inch_ex, ">= 0.0.0", only: :docs},     # Inch CI documentation quality test.
+      {:earmark, ">= 0.0.0", only: [:dev, :docs]},    # Markdown, dependency of ex_doc
+      {:ex_doc, "~> 0.11",   only: [:dev, :docs]},    # Documentation for Hex.pm
+      {:inch_ex, ">= 0.0.0", only: [:docs]},     # Inch CI documentation quality test.
 
       {:tensor, "~> 1.0"}
     ]
