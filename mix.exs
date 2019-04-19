@@ -46,7 +46,7 @@ defmodule MapDiff.Mixfile do
       {:ex_doc, "~> 0.11",   only: [:dev, :docs]},    # Documentation for Hex.pm
       {:inch_ex, ">= 0.0.0", only: [:docs]},     # Inch CI documentation quality test.
 
-      {:tensor, "~> 1.0"}
+      {:tensor, "~> 2.1"}
     ]
   end
 
