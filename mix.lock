@@ -11,6 +11,5 @@
   "makeup_elixir": {:hex, :makeup_elixir, "0.13.0", "be7a477997dcac2e48a9d695ec730b2d22418292675c75aa2d34ba0909dcdeda", [:mix], [{:makeup, "~> 0.8", [hex: :makeup, repo: "hexpm", optional: false]}], "hexpm"},
   "nimble_parsec": {:hex, :nimble_parsec, "0.5.0", "90e2eca3d0266e5c53f8fbe0079694740b9c91b6747f2b7e3c5d21966bba8300", [:mix], [], "hexpm"},
   "numbers": {:hex, :numbers, "5.1.0", "afa96e166c5da52b4ff7beaee0716a398cf3e4d10769c795f016de2163bbf7ba", [:mix], [{:coerce, "~> 1.0", [hex: :coerce, repo: "hexpm", optional: false]}, {:decimal, "~> 1.3.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm"},
-  "poison": {:hex, :poison, "3.0.0", "625ebd64d33ae2e65201c2c14d6c85c27cc8b68f2d0dd37828fde9c6920dd131", [:mix], []},
   "tensor": {:hex, :tensor, "2.1.2", "2f0569f922300e5fa09128481b9da418190e9f11c701d3777c4d0f60eac12806", [:mix], [{:extractable, "~> 0.2.0", [hex: :extractable, repo: "hexpm", optional: false]}, {:fun_land, "~> 0.9.0", [hex: :fun_land, repo: "hexpm", optional: true]}, {:insertable, "~> 0.2.0", [hex: :insertable, repo: "hexpm", optional: false]}, {:numbers, "~> 5.0", [hex: :numbers, repo: "hexpm", optional: false]}], "hexpm"},
 }
