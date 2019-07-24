@@ -7,7 +7,7 @@ elixir:
   - 1.7.4
   - 1.8.0
 otp_release:
-  - '20'
+  - '22.0.7'
 after_script:
   - mix deps.get --only docs
   - MIX_ENV=docs mix inch.report
