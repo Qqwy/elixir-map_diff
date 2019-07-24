@@ -151,6 +151,7 @@ end
 ```
 
 ## Changelog
+- 1.3.3 Removes unused dependency 'Tensor'.
 - 1.3.2 Fixes key => values that were unchanged still showing up in the `added` and `removed` fields. (Issue [#4](https://github.com/Qqwy/elixir_map_diff/issues/4))
 - 1.3.1 Fixed README and documentation.
 - 1.3.0 Improved doctests, added `:added` and `:removed` fields to see without crawling in the depth what was changed at a `:map_change`.
