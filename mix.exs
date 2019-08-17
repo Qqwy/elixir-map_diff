@@ -62,7 +62,7 @@ defmodule MapDiff.Mixfile do
       files: ["lib", "mix.exs", "README*", "LICENSE"],
       maintainers: ["Wiebe-Marten Wijnja/Qqwy"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/Qqwy/elixir_map_diff/"}
+      links: %{"GitHub" => "https://github.com/Qqwy/elixir-map_diff/"}
     ]
   end
 
